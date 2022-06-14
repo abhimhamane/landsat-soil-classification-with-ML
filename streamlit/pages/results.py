@@ -1,8 +1,8 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Page1",
+    page_title="Results",
     page_icon="",
 )
 
-st.title("Page1")
+st.title("Results")
