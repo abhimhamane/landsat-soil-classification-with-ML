@@ -32,7 +32,7 @@ data_preview_container = col1.container()
 data_preview_container.header("Dataset Preview")
 
 
-raw_data_train = pd.read_csv(r'Landsat_Soil_Data/Soil_test_dataset.csv.csv', header=None)
+raw_data_train = pd.read_csv("../Landsat_Soil_Data/Soil_test_dataset.csv", header=None)
 
 print(raw_data_train)
 data_preview_container.dataframe(raw_data_train)
