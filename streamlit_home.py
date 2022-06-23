@@ -28,17 +28,8 @@ col1.markdown("""
     2. Statlog (Landsat Satellite) Data Set - https://archive.ics.uci.edu/ml/datasets/Statlog+%28Landsat+Satellite%29
 """)
 
-data_preview_container = col1.container()
-data_preview_container.header("Dataset Preview")
 
-
-raw_data_train = pd.read_csv("Landsat_Soil_Data/Soil_train_dataset.csv", header=None)
-
-print(raw_data_train)
-data_preview_container.dataframe(raw_data_train)
-
-
-
+col1.write("-----------")
 
 col1.header("Contribute/Connect")
 col1.markdown("""
