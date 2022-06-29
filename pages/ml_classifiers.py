@@ -1,5 +1,6 @@
 from decimal import MIN_EMIN
 from pyexpat import model
+from xml.sax.handler import all_properties
 from click import option
 from requests import options
 import streamlit as st
@@ -7,19 +8,25 @@ import streamlit as st
 from pandas import read_csv
 from pandas import DataFrame
 
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 
 from numpy import arange
 from numpy import meshgrid
 from numpy import array
 
-from seaborn import scatterplot
+import seaborn as sns
 from matplotlib import pyplot as plt
 
 
 st.set_page_config(
     page_title="Classifier Models",
     page_icon="",
+    layout="wide",
+    initial_sidebar_state="expanded",
+
 )
 
 st.title("Classifier Models")
@@ -45,7 +52,6 @@ def viz_cdf():
 data = read_csv(r'./Clean_Data/clean_trainData.csv')
 test = read_csv(r'./Clean_Data/clean_testData.csv')
 
-print(data)
 # Sidebar
 st.sidebar.header("Parms")
 
@@ -84,8 +90,7 @@ if model_select == "KNN Classifier":
 
     # Model Params
     st.write(knn.get_params())
-    # Model Score
-    st.write(knn.score(test_bands, test_yy, sample_weight=None))
+
 
     # Vizualization
     _xx, _yy = viz_mesh_grid()
@@ -93,38 +98,125 @@ if model_select == "KNN Classifier":
     knnz = knn.predict(cdf_arr)
     cdf['predict'] = knnz
     #st.dataframe(cdf)
-    fig, ax = plt.subplots()
-    ax.contourf(_xx, _yy, knnz.reshape(_xx.shape))
-    scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="deep", marker='+')
+    fig, knn_plot = plt.subplots()
+    knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
+    sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
     plt.title("KKN Visualization")
     st.pyplot(fig)
+
+    # Accuracy Assessment
+    # Model Score
+    st.write(knn.score(train_bands, train_yy, sample_weight=None))
+
     
 
 
 elif model_select == "Nearest Centroid":
+    model_params.subheader(model_select)
+    nearest_centroid_descri, nearest_centroid_cont = model_params.columns([2, 1])
+    NC_params_form = nearest_centroid_cont.form("NC Params Form")
+    NC_params_form.text("Nearest Centroid Params Form")
+    metric = NC_params_form.selectbox("Metrics:", options=['euclidean', 'manhattan','cityblock', 'cosine', 'l1', 'l2'], index=0)
+    NC_params_form.form_submit_button("Apply Params")
+
+    nc = NearestCentroid(metric=metric)
+    nc.fit(train_bands, train_yy.ravel())
+
+    # Model Params
+    st.write(nc.get_params())
+
+    # Vizualization of trained model on trained data 
+    _xx, _yy = viz_mesh_grid()
+    cdf, cdf_arr = viz_cdf()
+    ncz = nc.predict(cdf_arr)
+    cdf['predict'] = ncz
     
-    pass
+    fig, nc_plot = plt.subplots()
+    nc_plot.contourf(_xx, _yy, ncz.reshape(_xx.shape))
+    sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
+    plt.title("Nearest Centroid Visualization")
+    st.pyplot(fig)
+    # Accuracy Assessment
+    # Model Score
+    st.write(nc.score(train_bands, train_yy, sample_weight=None))
+
+    # Vizualization of trained model on test data 
+
 
 elif model_select == "Decision Trees":
     model_params.subheader(model_select)
     decision_tree_descri, decision_tree_cont = model_params.columns([2, 1])
     decision_trees_form = decision_tree_cont.form("Decision Tree Form")
     decision_trees_form.text("Decision Tree Form")
-    critiria = decision_trees_form.selectbox("Criterion:", options=["gini", "entropy", "log_loss"], index=0)
+    critiria = decision_trees_form.selectbox("Criterion:", options=["gini", "entropy"], index=0)
+    # log_loss criterion does not work Check it further!!!!!!
     max_feat = decision_trees_form.selectbox("Maximum Features:", options=["auto", "sqrt", "log2", None], index=0)
-    max_depth = decision_trees_form.selectbox("Maximum Depth:", options=[None, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    max_depth = decision_trees_form.selectbox("Maximum Depth:", options=[None, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50])
     decision_trees_form.form_submit_button("Apply Params")
+
+    # Decision tree clasifier model
+    decision_tree_clf = DecisionTreeClassifier(criterion=critiria, max_depth=max_depth, max_features=max_feat)
+    decision_tree_clf.fit(train_bands, train_yy.ravel())
+    
+    # Model Params
+    st.write(decision_tree_clf.get_params())
+
+    # Vizualization of trained model on trained data 
+    _xx, _yy = viz_mesh_grid()
+    cdf, cdf_arr = viz_cdf()
+    decision_tree_z = decision_tree_clf.predict(cdf_arr)
+    cdf['predict'] = decision_tree_z
+    
+    fig, decision_tree_plot = plt.subplots()
+    decision_tree_plot.contourf(_xx, _yy, decision_tree_z.reshape(_xx.shape))
+    sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
+    plt.title("Decision Tree Visualization (Training Data)")
+    st.pyplot(fig)
+    # Accuracy Assessment
+    # Model Score
+    st.write(decision_tree_clf.score(train_bands, train_yy, sample_weight=None))
+
+    # Vizualization of trained model on test data 
+
+    
 
 elif model_select == "Random Forest":
     model_params.subheader(model_select)
     random_forest_descri, random_forest_cont = model_params.columns([2, 1])
     random_forest_form = random_forest_cont.form("Random Forest Form")
     random_forest_form.text("Random Forest Form")
-    n_estimate = random_forest_form.slider("n Estimators:", min_value=10, max_value=500, value=100, step=10)
-    criteria = random_forest_form.selectbox("Criterion:", options=["gini", "entropy", "log_loss"], index=0)
+    n_estimate = random_forest_form.slider("n Estimators:", min_value=1, max_value=300, value=100, step=10)
+    criteria = random_forest_form.selectbox("Criterion:", options=["gini", "entropy"], index=0)
+    # log_loss does not work !!!
     max_depth = random_forest_form.selectbox("Maximum Depth:", options = [None, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], index = 0)
-
     random_forest_form.form_submit_button("Apply params")
+
+    # Random Forest Classifier Model
+    rand_forest_clf = RandomForestClassifier(n_estimators=n_estimate, max_depth=max_depth, criterion=criteria)
+    rand_forest_clf.fit(train_bands, train_yy.ravel())
+
+    # Model Params
+    st.write(rand_forest_clf.get_params())
+
+    # Vizualization of trained model on trained data 
+    _xx, _yy = viz_mesh_grid()
+    cdf, cdf_arr = viz_cdf()
+    rand_forest_z = rand_forest_clf.predict(cdf_arr)
+    cdf['predict'] = rand_forest_z
+    
+    fig, random_forest_plot = plt.subplots()
+    random_forest_plot.contourf(_xx, _yy, rand_forest_z.reshape(_xx.shape))
+    sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
+    plt.title("Random Forest Visualization (Training Data)")
+    st.pyplot(fig)
+    # Accuracy Assessment
+    # Model Train Score
+    st.write(rand_forest_clf.score(train_bands, train_yy, sample_weight=None))
+
+    # Vizualization of trained model on test data 
+
+
+
 
 elif model_select == "Neural Network":
     model_params.subheader(model_select+": Multi-layer Perceptron classifier")
@@ -133,11 +225,43 @@ elif model_select == "Neural Network":
     neural_net_form.text("Neural Network Form")
     activation_func = neural_net_form.selectbox("Activation Functions:", options=['relu', 'identity', 'tanh', 'logistic'], index=0)
     solver_algo = neural_net_form.selectbox("Solvers:", options=['adam', 'sgd', 'lbfgs'], index=0)
-    learn_rate = neural_net_form.selectbox("Learning Rate:", options=['constant', 'invscaling', 'adaptive'], index=0)
-    hidden_layer_neurons = neural_net_form.slider("Hidden Layer neurons:", min_value=1, max_value=25, value = 10)
+    learning_rate = neural_net_form.selectbox("Learning Rate Algo:", options=['constant', 'invscaling', 'adaptive'], index=2)
+    alpha = neural_net_form.select_slider("Learning Rate:", options=[0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0, 20.0, 50.0, 100.0], value = 0.001)
+    batch_size = neural_net_form.select_slider("Batch size:", options=[4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048], value=64)
+    hidden_layer_neurons = neural_net_form.slider("No. of neurons in Hidden Layers:", min_value=1, max_value=25, value = 10)
     depth_hidden_layer = neural_net_form.slider("Depth of Hidden Layer:", min_value = 1, max_value=10, value = 4)
-    _hidden_layers = (hidden_layer_neurons, depth_hidden_layer)
+    hidden_layers = (hidden_layer_neurons, depth_hidden_layer)
+    max_iterations = neural_net_form.slider("Max Iterations:", min_value=1000, max_value=15000, value=5000, step=500)
     neural_net_form.form_submit_button("Apply params")
+
+    # Neural Network - MLPClassifier
+    neural_net_clf = MLPClassifier(solver=solver_algo,activation=activation_func, alpha=alpha, max_iter=max_iterations,
+                           hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=45, batch_size=batch_size)
+
+    neural_net_clf.fit(train_bands, train_yy.ravel())
+    
+    # Model Params
+    st.write(neural_net_clf.get_params())
+
+    # Vizualization of trained model on trained data 
+    _xx, _yy = viz_mesh_grid()
+    cdf, cdf_arr = viz_cdf()
+    NN_MLP_z = neural_net_clf.predict(cdf_arr)
+    cdf['predict'] = NN_MLP_z
+    
+    fig, NN_MLP_plot = plt.subplots()
+    NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
+    sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
+    plt.title("Neural Network-" + activation_func + " & " + solver_algo + " (Training Data)")
+    st.pyplot(fig)
+    # Accuracy Assessment
+    # Model Train Score
+    st.write(neural_net_clf.score(train_bands, train_yy, sample_weight=None))
+
+    # Vizualization of trained model on test data 
+
+
+
 
 
 
