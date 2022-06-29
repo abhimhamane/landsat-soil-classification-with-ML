@@ -97,16 +97,28 @@ if model_select == "KNN Classifier":
     cdf, cdf_arr = viz_cdf()
     knnz = knn.predict(cdf_arr)
     cdf['predict'] = knnz
-    #st.dataframe(cdf)
-    fig, knn_plot = plt.subplots()
-    knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
+    
+    train_plot, test_plot = st.columns([1,1])
+    train_fig, train_knn_plot = plt.subplots()
+    train_knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
-    plt.title("KKN Visualization")
-    st.pyplot(fig)
+    plt.title("KKN Visualization (Training Data)")
+    train_plot.pyplot(train_fig)
 
-    # Accuracy Assessment
-    # Model Score
-    st.write(knn.score(train_bands, train_yy, sample_weight=None))
+    # Model Train Score
+    train_plot.write(knn.score(train_bands, train_yy, sample_weight=None))
+
+    # Vizualization of trained model on test data 
+    test_fig, test_knn_plot = plt.subplots()
+    test_knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
+    sns.scatterplot(x=test[band_1], y=test[band_2], hue=test.soil_type, palette="bright", marker='+')
+    plt.title("KKN Visualization (Testing Data)")
+    test_plot.pyplot(test_fig)
+
+    # Model Test Score
+    test_plot.write(knn.score(test_bands, test_yy, sample_weight=None))
+
+
 
     
 
@@ -131,16 +143,24 @@ elif model_select == "Nearest Centroid":
     ncz = nc.predict(cdf_arr)
     cdf['predict'] = ncz
     
-    fig, nc_plot = plt.subplots()
-    nc_plot.contourf(_xx, _yy, ncz.reshape(_xx.shape))
+    train_plot, test_plot = st.columns([1,1])
+    train_fig, train_nc_plot = plt.subplots()
+    train_nc_plot.contourf(_xx, _yy, ncz.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
-    plt.title("Nearest Centroid Visualization")
-    st.pyplot(fig)
-    # Accuracy Assessment
-    # Model Score
-    st.write(nc.score(train_bands, train_yy, sample_weight=None))
+    plt.title("Nearest Centroid Visualization (Training Data)")
+    train_plot.pyplot(train_fig)
+    # Model Train Score
+    train_plot.write(nc.score(train_bands, train_yy, sample_weight=None))
 
     # Vizualization of trained model on test data 
+    test_fig, test_nc_plot = plt.subplots()
+    test_nc_plot.contourf(_xx, _yy, ncz.reshape(_xx.shape))
+    sns.scatterplot(x=test[band_1], y=test[band_2], hue=test.soil_type, palette="bright", marker='+')
+    plt.title("Nearest Centroid Visualization (Testing Data)")
+    test_plot.pyplot(test_fig)
+    
+    # Model Test Score
+    test_plot.write(nc.score(test_bands, test_yy, sample_weight=None))
 
 
 elif model_select == "Decision Trees":
@@ -167,16 +187,26 @@ elif model_select == "Decision Trees":
     decision_tree_z = decision_tree_clf.predict(cdf_arr)
     cdf['predict'] = decision_tree_z
     
-    fig, decision_tree_plot = plt.subplots()
-    decision_tree_plot.contourf(_xx, _yy, decision_tree_z.reshape(_xx.shape))
+    train_plot, test_plot = st.columns([1,1])
+    train_fig, train_decision_tree_plot = plt.subplots()
+    train_decision_tree_plot.contourf(_xx, _yy, decision_tree_z.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
     plt.title("Decision Tree Visualization (Training Data)")
-    st.pyplot(fig)
-    # Accuracy Assessment
-    # Model Score
-    st.write(decision_tree_clf.score(train_bands, train_yy, sample_weight=None))
+    train_plot.pyplot(train_fig)
+
+    # Model train Score
+    train_plot.write(decision_tree_clf.score(train_bands, train_yy, sample_weight=None))
 
     # Vizualization of trained model on test data 
+    test_fig, test_decision_tree_plot = plt.subplots()
+    test_decision_tree_plot.contourf(_xx, _yy, decision_tree_z.reshape(_xx.shape))
+    sns.scatterplot(x=test[band_1], y=test[band_2], hue=test.soil_type, palette="bright", marker='+')
+    plt.title("Decision Tree Visualization (Testing Data)")
+    test_plot.pyplot(test_fig)
+
+    # Model train Score
+    test_plot.write(decision_tree_clf.score(test_bands, test_yy, sample_weight=None))
+
 
     
 
@@ -204,17 +234,26 @@ elif model_select == "Random Forest":
     rand_forest_z = rand_forest_clf.predict(cdf_arr)
     cdf['predict'] = rand_forest_z
     
-    fig, random_forest_plot = plt.subplots()
-    random_forest_plot.contourf(_xx, _yy, rand_forest_z.reshape(_xx.shape))
+    train_plot, test_plot = st.columns([1,1])
+    train_fig, train_random_forest_plot = plt.subplots()
+    train_random_forest_plot.contourf(_xx, _yy, rand_forest_z.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
     plt.title("Random Forest Visualization (Training Data)")
-    st.pyplot(fig)
+    train_plot.pyplot(train_fig)
     # Accuracy Assessment
     # Model Train Score
-    st.write(rand_forest_clf.score(train_bands, train_yy, sample_weight=None))
+    train_plot.write(rand_forest_clf.score(train_bands, train_yy, sample_weight=None))
 
     # Vizualization of trained model on test data 
 
+    test_fig, test_random_forest_plot = plt.subplots()
+    test_random_forest_plot.contourf(_xx, _yy, rand_forest_z.reshape(_xx.shape))
+    sns.scatterplot(x=test[band_1], y=test[band_2], hue=test.soil_type, palette="bright", marker='+')
+    plt.title("Random Forest Visualization (Testing Data)")
+    test_plot.pyplot(test_fig)
+    # Accuracy Assessment
+    # Model Test Score
+    test_plot.write(rand_forest_clf.score(test_bands, test_yy, sample_weight=None))
 
 
 
@@ -227,7 +266,7 @@ elif model_select == "Neural Network":
     solver_algo = neural_net_form.selectbox("Solvers:", options=['adam', 'sgd', 'lbfgs'], index=0)
     learning_rate = neural_net_form.selectbox("Learning Rate Algo:", options=['constant', 'invscaling', 'adaptive'], index=2)
     alpha = neural_net_form.select_slider("Learning Rate:", options=[0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0, 20.0, 50.0, 100.0], value = 0.001)
-    batch_size = neural_net_form.select_slider("Batch size:", options=[4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048], value=64)
+    #batch_size = neural_net_form.select_slider("Batch size:", options=[4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048], value=64)
     hidden_layer_neurons = neural_net_form.slider("No. of neurons in Hidden Layers:", min_value=1, max_value=25, value = 10)
     depth_hidden_layer = neural_net_form.slider("Depth of Hidden Layer:", min_value = 1, max_value=10, value = 4)
     hidden_layers = (hidden_layer_neurons, depth_hidden_layer)
@@ -236,7 +275,7 @@ elif model_select == "Neural Network":
 
     # Neural Network - MLPClassifier
     neural_net_clf = MLPClassifier(solver=solver_algo,activation=activation_func, alpha=alpha, max_iter=max_iterations,
-                           hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=45, batch_size=batch_size)
+                           hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=45)
 
     neural_net_clf.fit(train_bands, train_yy.ravel())
     
@@ -249,16 +288,26 @@ elif model_select == "Neural Network":
     NN_MLP_z = neural_net_clf.predict(cdf_arr)
     cdf['predict'] = NN_MLP_z
     
-    fig, NN_MLP_plot = plt.subplots()
-    NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
+    train_plot, test_plot = st.columns([1,1])
+    train_fig, train_NN_MLP_plot = plt.subplots()
+    train_NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
     plt.title("Neural Network-" + activation_func + " & " + solver_algo + " (Training Data)")
-    st.pyplot(fig)
-    # Accuracy Assessment
+    train_plot.pyplot(train_fig)
+    #---- Accuracy Assessment
     # Model Train Score
-    st.write(neural_net_clf.score(train_bands, train_yy, sample_weight=None))
+    train_plot.write(neural_net_clf.score(train_bands, train_yy, sample_weight=None))
 
     # Vizualization of trained model on test data 
+    test_fig, test_NN_MLP_plot = plt.subplots()
+    test_NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
+    sns.scatterplot(x=test[band_1], y=test[band_2], hue=test.soil_type, palette="bright", marker='+')
+    plt.title("Neural Network-" + activation_func + " & " + solver_algo + " (Testing Data)")
+    test_plot.pyplot(test_fig)
+    #---- Accuracy Assessment
+    # Model Train Score
+    test_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
+    
 
 
 
