@@ -58,8 +58,8 @@ st.sidebar.header("Parms")
 model_select = st.sidebar.selectbox(label="Select ML Classifier:", options=["KNN Classifier", "Nearest Centroid", "Decision Trees", "Random Forest", "Neural Network"])
 
 band_select = st.sidebar.form("select_band")
-band_1 = band_select.selectbox("Select Band 1:", options=['b1', 'b2', 'b3', 'b4'], index = 2)
-band_2 = band_select.selectbox("Select Band 2:", options=['b1', 'b2', 'b3', 'b4'], index = 3)
+band_1 = band_select.selectbox("Select Band 1:", options=['b1', 'b2', 'b3', 'b4'], index = 0)
+band_2 = band_select.selectbox("Select Band 2:", options=['b1', 'b2', 'b3', 'b4'], index = 1)
 band_select.form_submit_button("Apply Bands")
 
 model_params = st.container()
