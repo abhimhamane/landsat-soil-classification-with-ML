@@ -6,9 +6,16 @@ import streamlit as st
 
 from pandas import read_csv
 from pandas import DataFrame
+
+from sklearn.neighbors import KNeighborsClassifier
+
 from numpy import arange
 from numpy import meshgrid
 from numpy import array
+
+from seaborn import scatterplot
+from matplotlib import pyplot as plt
+
 
 st.set_page_config(
     page_title="Classifier Models",
@@ -24,11 +31,15 @@ def viz_mesh_grid():
 
     xx, yy = meshgrid(b1,b2)
 
+    return xx, yy
+
+def viz_cdf():
+    xx, yy = viz_mesh_grid()
     cdf = DataFrame({'b1': xx.reshape(-1),
                     'b2': yy.reshape(-1)})
 
     cdf_arr = array(cdf)
-    return cdf_arr
+    return cdf, cdf_arr
 
 # import clean dataset
 data = read_csv(r'./Clean_Data/clean_trainData.csv')
@@ -47,17 +58,53 @@ band_select.form_submit_button("Apply Bands")
 
 model_params = st.container()
 
+# selecting bands for model training 
+
+train_bands = array(data[[band_1, band_2]])
+test_bands = array(test[[band_1, band_2]])
+
+train_yy = array(data[['soil_type']])
+test_yy = array(test[['soil_type']])
+
+
+
 if model_select == "KNN Classifier":
     model_params.subheader(model_select)
     knn_model_descri, knn_model_cont = model_params.columns([2, 1])
     knn_params_form = knn_model_cont.form("KNN Params Form")
     knn_params_form.text("KNN Params Form")
-    n_ngbrs = knn_params_form.slider("N Nearest Neighbours:", min_value=5, max_value=100, value=50, step=5)
+    n_ngbrs = knn_params_form.slider("N Nearest Neighbours:", min_value=1, max_value=100, value=50, step=5)
     weights = knn_params_form.selectbox("Weight Function:" ,options=["uniform", "distance"], index=0)
     algo = knn_params_form.selectbox("Nearest Neighbour Algorithm:", options=['auto', 'ball_tree', 'kd_tree', 'brute'], index=0)
     knn_params_form.form_submit_button("Apply Params")
+
+    # initiate Model classifier
+    knn = KNeighborsClassifier(n_neighbors=n_ngbrs, weights=weights, algorithm=algo)
+    knn.fit(train_bands, train_yy.ravel())
+
+    # Model Params
+    st.write(knn.get_params())
+    # Model Score
+    st.write(knn.score(test_bands, test_yy, sample_weight=None))
+
+    # Vizualization
+    _xx, _yy = viz_mesh_grid()
+    cdf, cdf_arr = viz_cdf()
+    knnz = knn.predict(cdf_arr)
+    cdf['predict'] = knnz
+    #st.dataframe(cdf)
+    fig, ax = plt.subplots()
+    ax.contourf(_xx, _yy, knnz.reshape(_xx.shape))
+    scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="deep", marker='+')
+    plt.title("KKN Visualization")
+    st.pyplot(fig)
+    
+
+
 elif model_select == "Nearest Centroid":
+    
     pass
+
 elif model_select == "Decision Trees":
     model_params.subheader(model_select)
     decision_tree_descri, decision_tree_cont = model_params.columns([2, 1])
@@ -81,7 +128,7 @@ elif model_select == "Random Forest":
 
 elif model_select == "Neural Network":
     model_params.subheader(model_select+": Multi-layer Perceptron classifier")
-    neural_net_descri, neural_net_cont = model_params.columns([2, 1])
+    neural_net_descri, neural_net_cont = model_params.columns([3, 2])
     neural_net_form = neural_net_cont.form("Neural Network Form")
     neural_net_form.text("Neural Network Form")
     activation_func = neural_net_form.selectbox("Activation Functions:", options=['relu', 'identity', 'tanh', 'logistic'], index=0)
@@ -94,10 +141,3 @@ elif model_select == "Neural Network":
 
 
 
-# selecting bands for model training 
-
-#train_bands = array(data[[band_1, band_2]])
-#test_bands = array(test[[band_1, band_2]])
-
-train_yy = array(data[['soil_type']])
-test_yy = array(test[['soil_type']])
