@@ -20,6 +20,7 @@ from numpy import array
 import seaborn as sns
 from matplotlib import pyplot as plt
 
+from ml_models import KNN_info
 
 st.set_page_config(
     page_title="Classifier Models",
@@ -90,10 +91,11 @@ if model_select == "KNN Classifier":
     
     # initiate Model classifier
     knn = KNeighborsClassifier(n_neighbors=n_ngbrs, weights=weights, algorithm=algo)
+    knn_hyperparameters = ['n_neighbors', 'weights', 'algorithm']
     knn.fit(train_bands, train_yy.ravel())
 
     # Model Params
-    st.write(knn.get_params())
+   # model_params.write(knn.get_params())
 
 
     # Vizualization
@@ -112,6 +114,11 @@ if model_select == "KNN Classifier":
     # Model Train Score
     train_plot.write(knn.score(train_bands, train_yy, sample_weight=None))
 
+    
+   
+    
+    
+
     # Vizualization of trained model on test data 
     #test_fig, test_knn_plot = plt.subplots()
     #test_knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
@@ -120,11 +127,8 @@ if model_select == "KNN Classifier":
     #test_plot.pyplot(test_fig)
 
     # Model Test Score
-    #test_plot.write(knn.score(test_bands, test_yy, sample_weight=None))
-
-
-
-    
+    train_plot.write(knn.score(test_bands, test_yy, sample_weight=None))
+  
 
 
 elif model_select == "Nearest Centroid":
@@ -140,7 +144,7 @@ elif model_select == "Nearest Centroid":
     nc.fit(train_bands, train_yy.ravel())
 
     # Model Params
-    st.write(nc.get_params())
+    #st.write(nc.get_params())
 
     # Vizualization of trained model on trained data 
     _xx, _yy = viz_mesh_grid()
@@ -185,7 +189,7 @@ elif model_select == "Decision Trees":
     decision_tree_clf.fit(train_bands, train_yy.ravel())
     
     # Model Params
-    st.write(decision_tree_clf.get_params())
+    #st.write(decision_tree_clf.get_params())
 
     # Vizualization of trained model on trained data 
     _xx, _yy = viz_mesh_grid()
@@ -233,7 +237,7 @@ elif model_select == "Random Forest":
     rand_forest_clf.fit(train_bands, train_yy.ravel())
 
     # Model Params
-    st.write(rand_forest_clf.get_params())
+    #st.write(rand_forest_clf.get_params())
 
     # Vizualization of trained model on trained data 
     _xx, _yy = viz_mesh_grid()
@@ -283,12 +287,12 @@ elif model_select == "Neural Network":
 
     # Neural Network - MLPClassifier
     neural_net_clf = MLPClassifier(solver=solver_algo,activation=activation_func, alpha=alpha, max_iter=max_iterations,
-                           hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=45)
+                           hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=1)
 
     neural_net_clf.fit(train_bands, train_yy.ravel())
     
     # Model Params
-    st.write(neural_net_clf.get_params())
+    #st.write(neural_net_clf.get_params())
 
     # Vizualization of trained model on trained data 
     _xx, _yy = viz_mesh_grid()
@@ -315,10 +319,3 @@ elif model_select == "Neural Network":
     #---- Accuracy Assessment
     # Model Train Score
     train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
-    
-
-
-
-
-
-
