@@ -20,7 +20,7 @@ from numpy import array
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from ml_models import KNN_info
+#from ml_models import KNN_info
 
 st.set_page_config(
     page_title="Classifier Models",
