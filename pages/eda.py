@@ -23,15 +23,21 @@ train_raw, test_raw = load_raw_soil_data()
 data_preview_container.dataframe(train_raw.head())
 
 
-
-
 data = isolate_central_pxls(train_raw)
 
+data_preview_container.header("Isolating Central Pixel Values")
+data_head, data_tail = data_preview_container.columns([1,1])
+data_head.subheader("Data Head")
+data_head.dataframe(data.head())
+data_tail.subheader("Data Tail")
+data_tail.dataframe(data.tail())
 
-data_preview_container.dataframe(data.head())
+data_stat_cont = data_preview_container.container()
+data_stat_cont.write("Value counts:")
+data_stat_cont.write(data['soil_type'].value_counts())
 
 
-data_preview_container.header("Clean Data")
+data_preview_container.header("Cleaned Data")
 clean_data_head, clean_data_tail =  data_preview_container.columns([1,1])
 
 clean_data_train = load_cleaned_soil_data()
