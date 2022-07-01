@@ -34,13 +34,6 @@ data.columns = ['b1', 'b2', 'b3', 'b4', 'soil_type']
 data_preview_container.dataframe(data.head())
 
 
-
-
-
-
-
-
-
 data_preview_container.header("Clean Data")
 clean_data_head, clean_data_tail =  data_preview_container.columns([1,1])
 

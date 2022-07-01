@@ -20,6 +20,7 @@ from numpy import array
 import seaborn as sns
 from matplotlib import pyplot as plt
 
+
 #from ml_models import KNN_info
 
 st.set_page_config(
@@ -98,7 +99,7 @@ if model_select == "KNN Classifier":
    # model_params.write(knn.get_params())
 
 
-    # Vizualization
+    # Vizualization Matlib and seaborn
     _xx, _yy = viz_mesh_grid()
     cdf, cdf_arr = viz_cdf()
     knnz = knn.predict(cdf_arr)
@@ -114,11 +115,7 @@ if model_select == "KNN Classifier":
     # Model Train Score
     train_plot.write(knn.score(train_bands, train_yy, sample_weight=None))
 
-    
    
-    
-    
-
     # Vizualization of trained model on test data 
     #test_fig, test_knn_plot = plt.subplots()
     #test_knn_plot.contourf(_xx, _yy, knnz.reshape(_xx.shape))
