@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from soil_eda import *
 
 st.set_page_config(
     page_title="Exploratory Data Analysis",
@@ -18,17 +19,13 @@ st.markdown("""
 
 data_preview_container = st.container()
 data_preview_container.header("Raw Data Preview")
-train_df = pd.read_csv("./Landsat_Soil_Data/Soil_train_dataset.csv", header=None)
-data_preview_container.dataframe(train_df.head())
+train_raw, test_raw = load_raw_soil_data()
+data_preview_container.dataframe(train_raw.head())
 
 
 
 
-train_X = train_df.loc[:, 16:19]
-train_Y = train_df.loc[:, 36]
-
-data = pd.concat([train_X, train_Y], axis=1)
-data.columns = ['b1', 'b2', 'b3', 'b4', 'soil_type']
+data = isolate_central_pxls(train_raw)
 
 
 data_preview_container.dataframe(data.head())
@@ -37,7 +34,7 @@ data_preview_container.dataframe(data.head())
 data_preview_container.header("Clean Data")
 clean_data_head, clean_data_tail =  data_preview_container.columns([1,1])
 
-clean_data_train = pd.read_csv("./Clean_Data/clean_trainData.csv")
+clean_data_train = load_cleaned_soil_data()
 
 clean_data_head.subheader("Head of data")
 clean_data_head.dataframe(clean_data_train.head())

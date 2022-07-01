@@ -9,14 +9,14 @@ def load_raw_soil_data():
     """
     train_df = pd.read_csv("Landsat_Soil_Data/Soil_train_dataset.csv", header=None)
     test_df = pd.read_csv("Landsat_Soil_Data/Soil_test_dataset.csv", header=None)
-    return train_df
+    return train_df, test_df
 
 def load_cleaned_soil_data():
     """
     Returns cleaned soil dataset as Pandas dataframe
     """
-    clean_train_df = pd.read_csv("Clean_Data/clean_trainData.csv", header=True)
-    clean_test_df = pd.read_csv("Clean_Data/clean_testData.csv", header=True)
+    clean_train_df = pd.read_csv("Clean_Data/clean_trainData.csv")
+    clean_test_df = pd.read_csv("Clean_Data/clean_testData.csv")
     return clean_train_df
 
 def isolate_central_pxls(dataset):
@@ -141,14 +141,18 @@ def outlier_removal(data):
 
 
 
+"""
 # Testing the functions
 data = isolate_central_pxls(load_raw_soil_data())
 #print(grouped_stats(data)[1])
 
 pp = spectral_reflectance_plot(grouped_stats(data)[0], grouped_stats(data)[1])
 
-box = data_box_plot(data)
+#box = data_box_plot(data)
 
 #pp_plot = data_pair_plot(data)
 clean_data = outlier_removal(data)
-print(clean_data.shape, data.shape)
+box2 = data_box_plot(clean_data)
+box2.show()
+#print(clean_data.shape, data.shape)
+"""
