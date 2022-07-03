@@ -20,6 +20,8 @@ from numpy import array
 import seaborn as sns
 from matplotlib import pyplot as plt
 
+from ml_models import *
+
 
 #from ml_models import KNN_info
 
@@ -77,7 +79,7 @@ test_yy = array(test[['soil_type']])
 model_prams_plots = st.container()
 
 if model_select == "KNN Classifier":
-    model_params, train_plot = model_prams_plots.columns([1,1])
+    model_params, train_plot = model_prams_plots.columns([1,2])
     model_params.subheader(model_select)
     #knn_model_descri, knn_model_cont = model_params.columns([2, 1])
 
@@ -115,6 +117,20 @@ if model_select == "KNN Classifier":
     # Model Train Score
     train_plot.write(knn.score(train_bands, train_yy, sample_weight=None))
 
+    n_est, n_score_train, n_score_test = n_estim_knn(weights, algo, train_bands, train_yy, test_bands, test_yy)
+    score_fig, score_knn_plt = plt.subplots()
+    #print(n_score_test)
+    plt.plot(n_est, n_score_train, label="Train Score")
+    plt.plot(n_est, n_score_test, label="Test Score")
+    plt.title("Score v/S n_estimators")
+    plt.legend()
+    plt.xticks(np.arange(1, 101, step=5))
+    plt.yticks(np.arange(0.80, 0.93, step=0.01))
+    plt.xlim(1, 100)
+    plt.grid()
+
+    train_plot.pyplot(score_fig)
+
    
     # Vizualization of trained model on test data 
     #test_fig, test_knn_plot = plt.subplots()
@@ -125,6 +141,8 @@ if model_select == "KNN Classifier":
 
     # Model Test Score
     train_plot.write(knn.score(test_bands, test_yy, sample_weight=None))
+
+
   
 
 
