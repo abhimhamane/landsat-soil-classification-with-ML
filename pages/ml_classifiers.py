@@ -366,5 +366,3 @@ elif model_select == "Neural Network":
 
     train_plot.pyplot(score_fig)
 
-    compare_colmn1, compare_colmn2 = compare_cont.columns([1, 1])
-    

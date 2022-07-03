@@ -1,3 +1,4 @@
+from tracemalloc import take_snapshot
 from pandas import DataFrame
 import numpy as np
 
@@ -62,20 +63,3 @@ def hidden_layer_MLP_plot():
 
     pass
     
-def activation_solver_mlp(solver_algo, alpha, max_iterations, hidden_layers, learning_rate, train_bands, train_yy, test_bands, test_yy):
-    activation_func = ['relu', 'tanh', 'identity', 'logistic']
-    solvers=['adam', 'sgd', 'lbfgs']
-
-    relu_score = []
-    tanh_score = []
-    ident_scr = []
-    log_scr = []
-
-    for act_func in activation_func:
-        rel = []
-        for solv in solvers:
-            neural_net_clf = MLPClassifier(solver=solver_algo,activation=act_func, alpha=alpha, max_iter=max_iterations,
-                                hidden_layer_sizes=hidden_layers,learning_rate=learning_rate, random_state=1)
-            
-            neural_net_clf.fit(train_bands, train_yy.ravel())
-            rel.append([])
