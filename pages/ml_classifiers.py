@@ -188,7 +188,7 @@ elif model_select == "Nearest Centroid":
 
 
 elif model_select == "Decision Trees":
-    model_params, train_plot = model_prams_plots.columns([1,1])
+    model_params, train_plot = model_prams_plots.columns([1,2])
     model_params.subheader(model_select)
     #decision_tree_descri, decision_tree_cont = model_params.columns([2, 1])
     decision_trees_form = model_params.form("Decision Tree Form")
@@ -231,6 +231,21 @@ elif model_select == "Decision Trees":
 
     # Model train Score
     train_plot.write(decision_tree_clf.score(test_bands, test_yy, sample_weight=None))
+
+    depths, n_score_train, n_score_test = max_depth_decision_tree(critiria, max_feat, train_bands, train_yy ,test_bands, test_yy)
+    score_fig, score_knn_plt = plt.subplots()
+    #print(n_score_test)
+    plt.plot(depths, n_score_train, label="Train Score")
+    plt.plot(depths, n_score_test, label="Test Score")
+    plt.title("Score v/s Decision Tree Depth")
+    plt.legend()
+    plt.xticks(np.arange(1, 51, step=4))
+    plt.yticks(np.arange(0.4, 0.99, step=0.05))
+    plt.xlim(1, 51)
+    plt.grid()
+
+    train_plot.pyplot(score_fig)
+    
 
 
     
@@ -334,3 +349,22 @@ elif model_select == "Neural Network":
     #---- Accuracy Assessment
     # Model Train Score
     train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
+
+    compare_cont = st.container()
+    
+    act_func, act_score_train, act_score_test = activation_func_plot(solver_algo, alpha, max_iterations, hidden_layer_neurons, learning_rate, train_bands, train_yy, test_bands, test_yy)
+    score_fig, score_mlp_plt = plt.subplots()
+    #print(n_score_test)
+    plt.plot(act_func, act_score_train, label="Train Score")
+    plt.plot(act_func, act_score_test, label="Test Score")
+    plt.title("")
+    plt.legend()
+    #plt.xticks(np.arange(1, 51, step=4))
+    #plt.yticks(np.arange(0.4, 0.99, step=0.05))
+    #plt.xlim(1, 51)
+    plt.grid()
+
+    train_plot.pyplot(score_fig)
+
+    compare_colmn1, compare_colmn2 = compare_cont.columns([1, 1])
+    
