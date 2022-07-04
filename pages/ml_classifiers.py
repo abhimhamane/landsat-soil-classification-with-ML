@@ -12,6 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn import tree
 
 from numpy import arange
 from numpy import meshgrid
@@ -245,6 +246,14 @@ elif model_select == "Decision Trees":
     plt.grid()
 
     train_plot.pyplot(score_fig)
+
+    decision_tree_figure = plt.figure(figsize=(25, 20))
+    _ = tree.plot_tree(decision_tree_clf, feature_names=[band_1, band_2], class_names=['1', '2', '3', '4', '5', '7'],filled=True,
+                        proportion= True, fontsize=None, node_ids=True, max_depth=3, label='all')
+    decision_tree_figure.savefig("decistion_tree.png")
+    st.image("decistion_tree.png")
+
+
     
 
 

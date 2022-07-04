@@ -1,6 +1,7 @@
 from tracemalloc import take_snapshot
 from pandas import DataFrame
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 from sklearn.neighbors import KNeighborsClassifier
