@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import pandas as pd
 import seaborn as sr
 
@@ -8,15 +9,15 @@ def load_raw_soil_data():
     Returns soil dataset as Pandas dataframe
     """
     train_df = pd.read_csv("Landsat_Soil_Data/Soil_train_dataset.csv", header=None)
-    test_df = pd.read_csv("Landsat_Soil_Data/Soil_test_dataset.csv", header=None)
-    return train_df, test_df
+    #test_df = pd.read_csv("Landsat_Soil_Data/Soil_test_dataset.csv", header=None)
+    return train_df
 
 def load_cleaned_soil_data():
     """
     Returns cleaned soil dataset as Pandas dataframe
     """
     clean_train_df = pd.read_csv("Clean_Data/clean_trainData.csv")
-    clean_test_df = pd.read_csv("Clean_Data/clean_testData.csv")
+    #clean_test_df = pd.read_csv("Clean_Data/clean_testData.csv")
     return clean_train_df
 
 def isolate_central_pxls(dataset):
@@ -72,21 +73,21 @@ def spectral_reflectance_plot(soil_dn, soil_std):
     plt.legend(loc='best', ncol=2)
     return plt
 
-def data_box_plot(data):
+def data_box_plot(data, plot_title):
     
-    plt.subplot(2,2,1)
-    sr.boxplot(x = 'soil_type', y = 'b1', data=data)
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
 
-    plt.subplot(2,2,2)
-    sr.boxplot(x = 'soil_type', y = 'b2', data=data)
+    fig.suptitle(plot_title)
+    sr.boxplot(ax=ax1, x = 'soil_type', y = 'b1', data=data)
 
-    plt.subplot(2,2,3)
-    sr.boxplot(x = 'soil_type', y = 'b3', data=data)
+    sr.boxplot(ax=ax2, x = 'soil_type', y = 'b2', data=data)
 
-    plt.subplot(2,2,4)
-    sr.boxplot(x = 'soil_type', y = 'b4', data=data)
+    sr.boxplot(ax = ax3, x = 'soil_type', y = 'b3', data=data)
 
-    return plt
+    sr.boxplot(ax = ax4, x = 'soil_type', y = 'b4', data=data)
+
+    
+    return fig
 
 def data_pair_plot(data):
     pg = sr.PairGrid(data, hue='soil_type', diag_sharey=True,palette="deep", height=3.0 , aspect=1.2)
@@ -97,8 +98,12 @@ def data_pair_plot(data):
     pg.map_upper(sr.kdeplot)
     #pg.map_diag(sr.boxplot)
     pg.add_legend()
-    pg.fig.suptitle("Your Title", y=1.08)
-    pg
+    pg.fig.suptitle("Data Pairplot", y=1.08)
+
+    pg.savefig("data_pairplot.png")
+
+    
+    return pg
 
 def bound(df):
     Q1 = df.quantile(0.25)
@@ -139,7 +144,19 @@ def outlier_removal(data):
 
     return cleaned_data
 
+def data_count_hist(data):
+    fig = plt.figure()
+    """plt.hist(data['soil_type'], bins = 12)
+    """
+    plt.title("Soil Type Histogram")
+    plt.xlabel("Soil Type")
+    plt.ylabel("Percent of Data")
 
+    sr.histplot(data=data, x="soil_type", stat="percent", discrete=True, hue='soil_type')
+    plt.legend()
+
+
+    return fig
 
 """
 # Testing the functions

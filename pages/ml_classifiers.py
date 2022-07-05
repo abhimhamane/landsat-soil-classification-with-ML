@@ -251,6 +251,7 @@ elif model_select == "Decision Trees":
     _ = tree.plot_tree(decision_tree_clf, feature_names=[band_1, band_2], class_names=['1', '2', '3', '4', '5', '7'],filled=True,
                         proportion= True, fontsize=None, node_ids=True, max_depth=3, label='all')
     decision_tree_figure.savefig("decistion_tree.png")
+    
     st.image("decistion_tree.png")
 
 
