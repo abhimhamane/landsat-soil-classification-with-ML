@@ -13,6 +13,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn import tree
+from sklearn.model_selection import learning_curve
+from sklearn import preprocessing
 
 from numpy import arange
 from numpy import meshgrid
@@ -62,6 +64,9 @@ st.sidebar.header("Parms")
 
 model_select = st.sidebar.selectbox(label="Select ML Classifier:", options=["KNN Classifier", "Nearest Centroid", "Decision Trees", "Random Forest", "Neural Network"])
 
+#noramlize_data_choice = st.sidebar.radio(label="Normalize the Data", options=['No', 'Yes'], horizontal=True)
+
+
 band_select = st.sidebar.form("select_band-(Features)")
 band_1 = band_select.selectbox("Select Band 1-(Feature 1):", options=['b1', 'b2', 'b3', 'b4'], index = 0)
 band_2 = band_select.selectbox("Select Band 2-(Feature 2):", options=['b1', 'b2', 'b3', 'b4'], index = 1)
@@ -71,6 +76,7 @@ band_select.form_submit_button("Apply Bands")
 
 # selecting bands for model training 
 
+    
 train_bands = array(data[[band_1, band_2]])
 test_bands = array(test[[band_1, band_2]])
 
@@ -116,7 +122,13 @@ if model_select == "KNN Classifier":
     train_plot.pyplot(train_fig)
 
     # Model Train Score
-    train_plot.write(knn.score(train_bands, train_yy, sample_weight=None))
+    model_params.subheader("Training Score")
+    train_score = str(round(knn.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(train_score)
+    model_params.subheader("Testing Score")
+    test_scorw = str(round(knn.score(test_bands, test_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(test_scorw)
+
 
     n_est, n_score_train, n_score_test = n_estim_knn(weights, algo, train_bands, train_yy, test_bands, test_yy)
     score_fig, score_knn_plt = plt.subplots()
@@ -141,14 +153,13 @@ if model_select == "KNN Classifier":
     #test_plot.pyplot(test_fig)
 
     # Model Test Score
-    train_plot.write(knn.score(test_bands, test_yy, sample_weight=None))
-
+    
 
   
 
 
 elif model_select == "Nearest Centroid":
-    model_params, train_plot = model_prams_plots.columns([1,1])
+    model_params, train_plot = model_prams_plots.columns([1,2])
     model_params.subheader(model_select)
     #nearest_centroid_descri, nearest_centroid_cont = model_params.columns([2, 1])
     NC_params_form = model_params.form("NC Params Form")
@@ -175,7 +186,12 @@ elif model_select == "Nearest Centroid":
     plt.title("Nearest Centroid Visualization (Training Data)")
     train_plot.pyplot(train_fig)
     # Model Train Score
-    train_plot.write(nc.score(train_bands, train_yy, sample_weight=None))
+    model_params.subheader("Training Score")
+    train_score = str(round(nc.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(train_score)
+    model_params.subheader("Testing Score")
+    test_score = str(round(nc.score(test_bands, test_yy, sample_weight=None), 4) *100) + '%'
+    model_params.write(test_score)
 
     # Vizualization of trained model on test data 
     #test_fig, test_nc_plot = plt.subplots()
@@ -185,7 +201,7 @@ elif model_select == "Nearest Centroid":
     #test_plot.pyplot(test_fig)
     
     # Model Test Score
-    train_plot.write(nc.score(test_bands, test_yy, sample_weight=None))
+    
 
 
 elif model_select == "Decision Trees":
@@ -221,7 +237,12 @@ elif model_select == "Decision Trees":
     train_plot.pyplot(train_fig)
 
     # Model train Score
-    train_plot.write(decision_tree_clf.score(train_bands, train_yy, sample_weight=None))
+    model_params.subheader("Training Score")
+    train_score = str(round(decision_tree_clf.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(train_score)
+    model_params.subheader("Testing Score")
+    test_score = str(round(decision_tree_clf.score(test_bands, test_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(test_score)
 
     # Vizualization of trained model on test data 
     #test_fig, test_decision_tree_plot = plt.subplots()
@@ -231,28 +252,30 @@ elif model_select == "Decision Trees":
     #test_plot.pyplot(test_fig)
 
     # Model train Score
-    train_plot.write(decision_tree_clf.score(test_bands, test_yy, sample_weight=None))
+    
 
-    depths, n_score_train, n_score_test = max_depth_decision_tree(critiria, max_feat, train_bands, train_yy ,test_bands, test_yy)
-    score_fig, score_knn_plt = plt.subplots()
+    #depths, n_score_train, n_score_test = max_depth_decision_tree(critiria, max_feat, train_bands, train_yy ,test_bands, test_yy)
+    #score_fig, score_knn_plt = plt.subplots()
     #print(n_score_test)
-    plt.plot(depths, n_score_train, label="Train Score")
-    plt.plot(depths, n_score_test, label="Test Score")
-    plt.title("Score v/s Decision Tree Depth")
-    plt.legend()
-    plt.xticks(np.arange(1, 51, step=4))
-    plt.yticks(np.arange(0.4, 0.99, step=0.05))
-    plt.xlim(1, 51)
-    plt.grid()
+    #plt.plot(depths, n_score_train, label="Train Score")
+    #plt.plot(depths, n_score_test, label="Test Score")
+    #plt.title("Score v/s Decision Tree Depth")
+    #plt.legend()
+    #plt.xticks(np.arange(1, 51, step=4))
+    #plt.yticks(np.arange(0.4, 0.99, step=0.05))
+    #plt.xlim(1, 51)
+    #plt.grid()
 
-    train_plot.pyplot(score_fig)
+    #train_plot.pyplot(score_fig)
 
-    decision_tree_figure = plt.figure(figsize=(25, 20))
+    decision_tree_figure = plt.figure(figsize=(15, 10))
     _ = tree.plot_tree(decision_tree_clf, feature_names=[band_1, band_2], class_names=['1', '2', '3', '4', '5', '7'],filled=True,
                         proportion= True, fontsize=None, node_ids=True, max_depth=3, label='all')
+    plt.title("Decision Tree Vizualization")
     decision_tree_figure.savefig("decistion_tree.png")
     
     st.image("decistion_tree.png")
+    st.caption("Decision Tree Vizualization")
 
 
     
@@ -261,7 +284,7 @@ elif model_select == "Decision Trees":
     
 
 elif model_select == "Random Forest":
-    model_params, train_plot = model_prams_plots.columns([1,1])
+    model_params, train_plot = model_prams_plots.columns([1,2])
     model_params.subheader(model_select)
     #random_forest_descri, random_forest_cont = model_params.columns([2, 1])
     random_forest_form = model_params.form("Random Forest Form")
@@ -293,7 +316,14 @@ elif model_select == "Random Forest":
     train_plot.pyplot(train_fig)
     # Accuracy Assessment
     # Model Train Score
-    train_plot.write(rand_forest_clf.score(train_bands, train_yy, sample_weight=None))
+    model_params.subheader("Training Score")
+    train_score = str(round(rand_forest_clf.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(train_score)
+
+    # Model Test Score
+    model_params.subheader("Testing Score")
+    test_score = str(round(rand_forest_clf.score(test_bands, test_yy, sample_weight=None), 4)*100) + '%'
+    model_params.write(test_score)
 
     # Vizualization of trained model on test data 
 
@@ -303,13 +333,11 @@ elif model_select == "Random Forest":
     #plt.title("Random Forest Visualization (Testing Data)")
     #test_plot.pyplot(test_fig)
     # Accuracy Assessment
-    # Model Test Score
-    train_plot.write(rand_forest_clf.score(test_bands, test_yy, sample_weight=None))
 
 
 
 elif model_select == "Neural Network":
-    model_params, train_plot = model_prams_plots.columns([1,1])
+    model_params, train_plot = model_prams_plots.columns([1,2])
     model_params.subheader(model_select+": Multi-layer Perceptron classifier")
     #neural_net_descri, neural_net_cont = model_params.columns([3, 2])
     neural_net_form = model_params.form("Neural Network Form")
@@ -339,17 +367,22 @@ elif model_select == "Neural Network":
     cdf, cdf_arr = viz_cdf()
     NN_MLP_z = neural_net_clf.predict(cdf_arr)
     cdf['predict'] = NN_MLP_z
+
+    #---- Accuracy Assessment
+    # Model Train Score
+    train_score = "Training Score = " + str(round(neural_net_clf.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%, '
+    test_score = "Testing Score = "+str(round(neural_net_clf.score(test_bands, test_yy, sample_weight=None), 4)*100) + '%'
+    train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
+
     
     #train_plot, test_plot = st.columns([1,1])
     train_fig, train_NN_MLP_plot = plt.subplots()
     train_NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
     sns.scatterplot(x=data[band_1], y=data[band_2], hue=data.soil_type, palette="bright", marker='+')
     plt.title("Neural Network-" + activation_func + " & " + solver_algo + " (Training Data)")
+    plt.text(3.5, 0.9,train_score + test_score , fontsize = 10)
     train_plot.pyplot(train_fig)
-    #---- Accuracy Assessment
-    # Model Train Score
-    train_plot.write(neural_net_clf.score(train_bands, train_yy, sample_weight=None))
-
+    
     # Vizualization of trained model on test data 
     #test_fig, test_NN_MLP_plot = plt.subplots()
     #test_NN_MLP_plot.contourf(_xx, _yy, NN_MLP_z.reshape(_xx.shape))
@@ -358,21 +391,10 @@ elif model_select == "Neural Network":
     #test_plot.pyplot(test_fig)
     #---- Accuracy Assessment
     # Model Train Score
-    train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
-
-    compare_cont = st.container()
     
-    act_func, act_score_train, act_score_test = activation_func_plot(solver_algo, alpha, max_iterations, hidden_layer_neurons, learning_rate, train_bands, train_yy, test_bands, test_yy)
-    score_fig, score_mlp_plt = plt.subplots()
-    #print(n_score_test)
-    plt.plot(act_func, act_score_train, label="Train Score")
-    plt.plot(act_func, act_score_test, label="Test Score")
-    plt.title("")
-    plt.legend()
-    #plt.xticks(np.arange(1, 51, step=4))
-    #plt.yticks(np.arange(0.4, 0.99, step=0.05))
-    #plt.xlim(1, 51)
-    plt.grid()
 
-    train_plot.pyplot(score_fig)
+    #compare_cont = st.container()
+    #relu_plot = relu_depth_nn(solver_algo, alpha, max_iterations, learning_rate, hidden_layer_neurons, train_bands, train_yy, test_bands, test_yy)
+    #compare_cont.pyplot(relu_plot)
+    
 
