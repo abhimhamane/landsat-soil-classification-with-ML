@@ -396,5 +396,7 @@ elif model_select == "Neural Network":
     #compare_cont = st.container()
     #relu_plot = relu_depth_nn(solver_algo, alpha, max_iterations, learning_rate, hidden_layer_neurons, train_bands, train_yy, test_bands, test_yy)
     #compare_cont.pyplot(relu_plot)
-    
+
+# Changing the plotting package
+
 
