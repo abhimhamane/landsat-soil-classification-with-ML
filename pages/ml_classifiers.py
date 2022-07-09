@@ -372,7 +372,7 @@ elif model_select == "Neural Network":
     # Model Train Score
     train_score = "Training Score = " + str(round(neural_net_clf.score(train_bands, train_yy, sample_weight=None), 4)*100) + '%, '
     test_score = "Testing Score = "+str(round(neural_net_clf.score(test_bands, test_yy, sample_weight=None), 4)*100) + '%'
-    train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
+    #train_plot.write(neural_net_clf.score(test_bands, test_yy, sample_weight=None))
 
     
     #train_plot, test_plot = st.columns([1,1])
